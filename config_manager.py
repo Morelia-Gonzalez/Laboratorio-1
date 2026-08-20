@@ -40,22 +40,11 @@ def _validate(data: dict) -> dict:
 
 
 def load_config(path: str = CONFIG_PATH, backup_path: str = BACKUP_PATH):
-    """Carga la configuración desde disco.
-
-    Devuelve una tupla (config: dict, mensaje: str | None).
-    El mensaje, cuando no es None, describe una condición no fatal
-    que el usuario debería conocer (archivo ausente, corrupto, etc.)
-
-    Nunca lanza una excepción no controlada: cualquier problema de
-    E/S o de formato degrada a los valores por defecto (o al
-    respaldo, si existe) y retorna un mensaje explicativo.
-    """
+   
     # Caso 1: archivo ausente -> valores por defecto, sin excepción
     if not os.path.exists(path):
         return DEFAULT_CONFIG.copy(), (
-            "No se encontró un archivo de configuración previo. "
-            "Se usarán los valores por defecto."
-        )
+    )
 
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -69,50 +58,27 @@ def load_config(path: str = CONFIG_PATH, backup_path: str = BACKUP_PATH):
                 with open(backup_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 return _validate(data), (
-                    "El archivo de configuración estaba corrupto. "
-                    "Se restauró automáticamente desde el respaldo (config.bak)."
                 )
             except Exception:
                 pass
         return DEFAULT_CONFIG.copy(), (
-            "El archivo de configuración estaba corrupto y no había un "
-            "respaldo válido disponible. Se usarán los valores por defecto."
         )
 
     except PermissionError:
         # Caso 3: falta de permisos de lectura
         return DEFAULT_CONFIG.copy(), (
-            "No se tienen permisos de lectura sobre el archivo de "
-            "configuración. Se usarán los valores por defecto para esta sesión."
         )
 
     except OSError as e:
         # Cualquier otro error de E/S inesperado
         return DEFAULT_CONFIG.copy(), (
             f"Error inesperado al leer la configuración ({e}). "
-            "Se usarán los valores por defecto."
         )
 
 
 def save_config(config: dict, path: str = CONFIG_PATH,
                  backup_path: str = BACKUP_PATH, tmp_path: str = TMP_PATH):
-    """Guarda la configuración de forma segura.
 
-    Flujo:
-      1. Si existe un config.json previo, se copia a config.bak
-         (respaldo de la configuración anterior) ANTES de tocar nada.
-      2. Se escribe el nuevo contenido completo a un archivo temporal
-         (config.tmp), nunca directamente sobre config.json.
-      3. Se reemplaza config.json con config.tmp usando os.replace,
-         que en sistemas POSIX y Windows modernos es una operación
-         atómica: o el archivo queda completamente reemplazado, o
-         queda el original intacto. Nunca un estado intermedio.
-
-    Esto evita que un cierre abrupto durante el guardado deje el
-    archivo de configuración corrupto o a medio escribir.
-
-    Devuelve (exito: bool, mensaje: str | None)
-    """
     validated = _validate(config)
 
     try:
@@ -122,9 +88,6 @@ def save_config(config: dict, path: str = CONFIG_PATH,
                 shutil.copy2(path, backup_path)
             except PermissionError:
                 return False, (
-                    "No se pudo crear el respaldo (config.bak) por falta de "
-                    "permisos. No se guardaron los cambios para proteger la "
-                    "configuración existente."
                 )
 
         # Paso 2: escritura a archivo temporal, en UTF-8 explícito
@@ -145,8 +108,6 @@ def save_config(config: dict, path: str = CONFIG_PATH,
             except OSError:
                 pass
         return False, (
-            "No se tienen permisos de escritura para guardar la "
-            "configuración. Los cambios no se guardaron."
         )
 
     except OSError as e:

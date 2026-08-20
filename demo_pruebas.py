@@ -1,13 +1,3 @@
-"""
-demo_pruebas.py
-
-Script de evidencia: ejercita los flujos requeridos por el laboratorio
-sin necesidad de interacción gráfica, e imprime un log de cada caso
-para incluir en el documento PDF.
-
-Ejecutar con:  python demo_pruebas.py
-"""
-
 import json
 import os
 import stat
@@ -83,12 +73,6 @@ def caso_4_sin_permisos():
     # Restaurar config.json válido primero
     cfgm.save_config(cfgm.DEFAULT_CONFIG.copy())
 
-    # NOTA: en un usuario normal (no root), quitar el permiso de escritura
-    # con os.chmod(ruta, stat.S_IREAD) es suficiente para que open(..., "w")
-    # lance PermissionError. En este entorno de pruebas el script corre
-    # como root, que ignora los bits de permisos clásicos, así que se usa
-    # el atributo "inmutable" del sistema de archivos (chattr +i) para
-    # forzar el mismo escenario real de "sin permisos de escritura".
     os.chmod(cfgm.CONFIG_PATH, stat.S_IREAD)
     used_chattr = False
     if os.system("chattr +i " + cfgm.CONFIG_PATH + " 2>/dev/null") == 0:

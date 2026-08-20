@@ -1,8 +1,20 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, colorchooser, filedialog
 
 import config_manager as cfgm
+
+if not hasattr(cfgm, "load_config") or not hasattr(cfgm, "save_config"):
+    print("=" * 70)
+    print("ERROR DE DIAGNÓSTICO: el módulo config_manager importado no tiene")
+    print("las funciones esperadas (load_config / save_config).")
+    print("Archivo realmente cargado:", getattr(cfgm, "__file__", "desconocido"))
+    print("Carpeta de trabajo actual:", os.getcwd())
+    print("sys.path[0] (primera carpeta de búsqueda):", sys.path[0])
+    print("=" * 70)
+    raise SystemExit(
+    )
 
 
 class App(tk.Tk):
