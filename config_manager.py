@@ -1,33 +1,3 @@
-"""
-config_manager.py
-
-Maneja la carga, guardado, respaldo y validación del archivo de
-configuración de usuario de la aplicación.
-
-Formato elegido: JSON (UTF-8)
-------------------------------
-Se eligió JSON sobre otras alternativas (se evaluó especialmente CSV)
-por las siguientes razones técnicas:
-
-- Legibilidad: JSON representa de forma natural pares clave-valor y
-  tipos anidados (ej. color_barra_menu como string, tamaño_fuente
-  como entero), mientras que CSV requeriría columnas fijas y no
-  representa bien un objeto de configuración jerárquico.
-- Facilidad de parseo: Python trae json en su librería estándar,
-  sin dependencias externas, con serialización/deserialización
-  segura y tipada. CSV exigiría parseo manual y conversión de tipos.
-- Robustez ante corrupción: un JSON corrupto falla de forma
-  predecible con json.JSONDecodeError, lo que permite detectar el
-  problema y recuperar desde el respaldo. Un CSV corrupto (columna
-  faltante, delimitador roto) puede leerse "silenciosamente" con
-  datos desalineados sin lanzar una excepción clara.
-- Tamaño: para un archivo de configuración pequeño (menos de 1 KB),
-  la diferencia de tamaño entre JSON y CSV es irrelevante.
-- Extensibilidad: agregar nuevas claves (ej. nuevas preferencias) no
-  rompe la estructura, a diferencia de CSV donde agregar una columna
-  desalinea las filas existentes si no se regenera todo el archivo.
-"""
-
 import json
 import os
 import shutil

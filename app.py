@@ -21,9 +21,7 @@ class App(tk.Tk):
         self._build_body()
         self._apply_config_to_ui()
 
-    # ------------------------------------------------------------------
     # Menú principal
-    # ------------------------------------------------------------------
     def _build_menu(self):
         menubar = tk.Menu(self)
 
@@ -85,9 +83,7 @@ class App(tk.Tk):
             bg=c["color_barra_menu"],
         )
 
-    # ------------------------------------------------------------------
     # Ventana de Settings
-    # ------------------------------------------------------------------
     def open_settings(self):
         SettingsWindow(self)
 
